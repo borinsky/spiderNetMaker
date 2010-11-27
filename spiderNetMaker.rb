@@ -1,25 +1,48 @@
+# This Scripte write a SpiderNetGraphic with a ruby Script.
+# You give the names and values of the axles and the script write the graphic in the Size an graphicformat you want. 
+#
+#
+# useage: ruby spiderNetmaker.rb SizeX SizeY TitleLeftCorner AxleName1 Value1 .. AxleNameN ValueN  FileName.format
+
 # Benötigte Pakete installieren
 require 'rubygems'
 require 'RMagick'
+
 include Magick
 include Math
 
 
-# Größe der Grafik
-canvas_x=800
-canvas_y=450
+# Analyse the given arguments
+# fetch teh values
 
-# Mitte der Grafik (x=200,y=150)
+# Size of canvas
+canvas_x=ARGV[0].to_i
+canvas_y=ARGV[1].to_i
+
+# 
+numbers_of_arguments=ARGV.length.to_i
+count_axle = (numbers_of_arguments-4)/2
+end_values=numbers_of_arguments-2
+name_of_graphic=ARGV[numbers_of_arguments-1].to_s
+
+# get names and values
+beschriftung = Array.new
+werte = Array.new
+for i in (3.step(end_values, 2)) do
+  beschriftung << ARGV[i].to_s
+  werte << ARGV[i+1].to_i  
+end 
+puts beschriftung
+puts werte
+
+
+# calculate the midpoint
 mitte_x=canvas_x/2
 mitte_y=canvas_y/2
 
-# Achsenlänge festlegen
+# length of the axles
 achsenlaenge = (canvas_y/2)-40
 
-# Beschriftungen
-beschriftung = ["Informationen und Daten","Algorithmen","Sprachen und Automaten","Informatiksysteme","Informatik, Mensch und Gesellschaft"]
-# Werte für die Inhaltsbereiche
-werte = [6,10,1,8,6]
 
 # Array für die x und y Werte des Poligon erzeugen
 wertx = []
@@ -49,7 +72,7 @@ werty = []
 #  erhibt sich die x koordinate, wenn mann mitte x -b berechnet
 
 canvas = Magick::Image.new(canvas_x, canvas_y,
-              Magick::HatchFill.new('white','lightcyan2'))
+              Magick::HatchFill.new('white','lightcyan1'))
 gc = Magick::Draw.new
 
 # Zeichne die inneren Achsen
@@ -85,4 +108,4 @@ gc.stroke_width(1)
 gc.text(10, 30, "Inhaltsbereiche")
 
 gc.draw(canvas)
-canvas.write('Zeichnung.png')
+canvas.write(name_of_graphic)
