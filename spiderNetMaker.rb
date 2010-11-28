@@ -45,8 +45,9 @@ achsenlaenge = (canvas_y/2)-40
 
 
 # Array für die x und y Werte des Poligon erzeugen
-wertx = []
-werty = []
+wertx = Array.new
+werty = Array.new
+points = Array.new
 
 # Zeichnen eines Netzes 
 #
@@ -78,28 +79,29 @@ gc = Magick::Draw.new
 # Zeichne die inneren Achsen
 # 72,144,216,288,360 
 
-for i in (0..4)
-  winkel = (i+1)*72
-  bogen=(PI/(180/(winkel.to_f+30)))
+for i in (0..count_axle-1)
+  winkel = (i+1)*(360/count_axle)
+  bogen=(PI/(180/(winkel.to_f)))
   delta_x=cos(bogen)*achsenlaenge
   delta_y=sin(bogen)*achsenlaenge
   wertx[i] = mitte_x-cos(bogen)*werte[i]*16
   werty[i] = mitte_y-sin(bogen)*werte[i]*16
+  points << wertx[i].to_i
+  points << werty[i].to_i
   gc.stroke('gray')
   gc.stroke_width(1)
   gc.line(mitte_x,mitte_y,mitte_x-delta_x,mitte_y-delta_y)
-  if i < 4
-    gc.text(mitte_x-delta_x+5, mitte_y-delta_y+5, beschriftung[i])
-  else
-    gc.text(mitte_x-delta_x-200, mitte_y-delta_y+5, beschriftung[i])
-  end
+  gc.text(mitte_x-delta_x+5, mitte_y-delta_y+5, beschriftung[i])
 end
+
+polypoints = "M "+points.join("+").to_s+" z"
+puts polypoints
 
 # zeichenn des netzes
 gc.stroke('#001aff')
-gc.stroke_width(3)
-gc.fill_opacity(0)
-gc.polygon(wertx[0],werty[0],wertx[1],werty[1],wertx[2],werty[2],wertx[3],werty[3],wertx[4],werty[4])
+gc.stroke_width(1)
+gc.fill_opacity(0.2)
+gc.path(polypoints)
 
 
 # Bechriftungen
